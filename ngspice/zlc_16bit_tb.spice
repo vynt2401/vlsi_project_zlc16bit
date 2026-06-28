@@ -1,0 +1,77 @@
+* =============================================================
+* Testbench: 16-bit Zero-Latency Checker (ZLC)
+* Process : SkyWater SKY130 (sky130_fd_sc_hd)
+* Stimulus : Test various 16-bit input patterns
+* Verify   : Y[4] = 1 when all A[15:0] = 0
+*            Y[4] = 0 when any A bit != 0
+* =============================================================
+
+* ---- Include PDK libs ----------------------------------------
+.lib $PDK_ROOT/$PDK/libs.tech/combined/sky130.lib.spice tt
+
+* ---- Include DUT (extracted with parasitics) -----------------
+.include $PWD/../magic/zlc_16bit.rcx.spice
+
+* ---- Global supply ------------------------------------------
+.global VDD VSS
+Vvdd VDD 0 DC 1.8
+Vvss VSS 0 DC 0
+
+* ---- Stimulus sources ----------------------------------------
+* Pattern 1: A = 0x0000 (all zeros) -> Y[4] should be 1
+* Pattern 2: A = 0x0001 (bit0=1)     -> Y[4] should be 0
+* Pattern 3: A = 0x8000 (bit15=1)    -> Y[4] should be 0
+* Pattern 4: A = 0xFFFF (all ones)   -> Y[4] should be 0
+* Pattern 5: A = 0x00FF (lower byte) -> Y[4] should be 0
+* Pattern 6: A = 0x0000 (back to 0)  -> Y[4] should be 1
+
+* A[15]: 0 -> 0 -> 1 -> 1 -> 0 -> 0
+Va15 A15 0 PWL(0ns 0 5ns 0 5.05ns 1.8 10ns 1.8 10.05ns 0 15ns 0 15.05ns 1.8 20ns 1.8 20.05ns 0 25ns 0)
+
+* A[12]: 0 -> 0 -> 0 -> 1 -> 0 -> 0
+Va12 A12 0 PWL(0ns 0 10ns 0 10.05ns 1.8 15ns 1.8 15.05ns 0 25ns 0)
+
+* A[13]: 0 -> 0 -> 0 -> 1 -> 0 -> 0
+Va13 A13 0 PWL(0ns 0 10ns 0 10.05ns 1.8 15ns 1.8 15.05ns 0 25ns 0)
+
+* A[14]: 0 -> 0 -> 0 -> 1 -> 0 -> 0
+Va14 A14 0 PWL(0ns 0 10ns 0 10.05ns 1.8 15ns 1.8 15.05ns 0 25ns 0)
+
+* A[11:0] - connect via bus for readability
+* A[11]: 0 throughout
+Va11 A11 0 DC 0
+* A[10:8]: 0 throughout
+Va10 A10 0 DC 0
+Va9  A9  0 DC 0
+Va8  A8  0 DC 0
+* A[7:4]: 0 throughout
+Va7  A7  0 DC 0
+Va6  A6  0 DC 0
+Va5  A5  0 DC 0
+Va4  A4  0 DC 0
+* A[3]: 0 throughout
+Va3  A3  0 DC 0
+* A[2:1]: 0 throughout
+Va2  A2  0 DC 0
+Va1  A1  0 DC 0
+* A[0]: 0 -> 1 -> 0 -> 1 -> 0 -> 0
+Va0  A0  0 PWL(0ns 0 5ns 0 5.05ns 1.8 10ns 1.8 10.05ns 0 15ns 0 15.05ns 1.8 20ns 1.8 20.05ns 0 25ns 0)
+
+* ---- DUT: 16-bit Zero-Latency Checker ------------------------
+* Port order from extracted netlist:
+* Y[4] Y[3] Y[2] Y[1] Y[0] A[15] A[12] A[13] A[14] A[11] A[8] A[9]
+* A[10] A[6] A[5] A[4] A[7] A[2] A[1] A[0] A[3] VDD GND
+Xzlc Y4 Y3 Y2 Y1 Y0 A15 A12 A13 A14 A11 A8 A9 A10 A6 A5 A4 A7 A2 A1 A0 A3 VDD VSS zlc_16bit
+
+* ---- Load capacitance (4fF typical for 1 cell) --
+Cload_y4 Y4 0 0.01pF
+Cload_y3 Y3 0 0.01pF
+Cload_y2 Y2 0 0.01pF
+Cload_y1 Y1 0 0.01pF
+Cload_y0 Y0 0 0.01pF
+
+* ---- Analysis ------------------------------------------------
+.tran 1ps 25ns
+.save v(A15) v(A12) v(A13) v(A14) v(A0) v(Y4) v(Y3) v(Y2) v(Y1) v(Y0)
+
+.end

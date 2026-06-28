@@ -1,0 +1,40 @@
+** sch_path: /home/me/sky130_adder_4bit/xschem/zlc_16bit.sch
+.subckt zlc_16bit Y[4] Y[3] Y[2] Y[1] Y[0] A[15] A[14] A[13] A[12] A[11] A[10] A[9] A[8] A[7] A[6] A[5] A[4] A[3] A[2] A[1] A[0]
++ VDD GND
+*.PININFO VDD:I GND:I A[15:0]:I Y[4:0]:O
+x5 Z3[2] Z2[2] Z1[2] Z0[2] GND GND VDD VDD Y[4] sky130_fd_sc_hd__and4_1
+x6 Z1[2] Z0[2] GND GND VDD VDD net1 sky130_fd_sc_hd__nand2_1
+x7 Z3[2] Z2[2] net1 GND GND VDD VDD Y[3] sky130_fd_sc_hd__and3_1
+x8 Z0[2] GND GND VDD VDD net2 sky130_fd_sc_hd__inv_1
+x9 Z2[2] GND GND VDD VDD net5 sky130_fd_sc_hd__inv_1
+x10 Z3[2] net4 GND GND VDD VDD Y[2] sky130_fd_sc_hd__and2_1
+x11 net5 net3 GND GND VDD VDD net4 sky130_fd_sc_hd__or2_1
+x12 Z1[2] net2 GND GND VDD VDD net3 sky130_fd_sc_hd__and2_1
+x13 Z3[1] Z2[1] Y[2] GND GND VDD VDD net6 sky130_fd_sc_hd__mux2_1
+x14 Z1[1] Z0[1] Y[2] GND GND VDD VDD net7 sky130_fd_sc_hd__mux2_1
+x15 net6 net7 Y[3] GND GND VDD VDD Y[1] sky130_fd_sc_hd__mux2_1
+x16 Z3[0] Z2[0] Y[2] GND GND VDD VDD net8 sky130_fd_sc_hd__mux2_1
+x17 Z1[0] Z0[0] Y[2] GND GND VDD VDD net9 sky130_fd_sc_hd__mux2_1
+x18 net8 net9 Y[3] GND GND VDD VDD Y[0] sky130_fd_sc_hd__mux2_1
+x1 Z3[2] Z3[1] Z3[0] A[15] A[14] A[13] A[12] VDD GND zlc_4bit
+x2 Z2[2] Z2[1] Z2[0] A[11] A[10] A[9] A[8] VDD GND zlc_4bit
+x3 Z1[2] Z1[1] Z1[0] A[7] A[6] A[5] A[4] VDD GND zlc_4bit
+x4 Z0[2] Z0[1] Z0[0] A[3] A[2] A[1] A[0] VDD GND zlc_4bit
+.ends
+
+* expanding   symbol:  zlc_4bit.sym # of pins=4
+** sym_path: /home/me/sky130_adder_4bit/xschem/zlc_4bit.sym
+** sch_path: /home/me/sky130_adder_4bit/xschem/zlc_4bit.sch
+.subckt zlc_4bit Z[2] Z[1] Z[0] A[3] A[2] A[1] A[0] VDD GND
+*.PININFO A[3:0]:I Z[2:0]:O VDD:I GND:I
+x1 A[3] A[2] A[1] A[0] GND GND VDD VDD Z[2] sky130_fd_sc_hd__nor4_1
+x2 A[3] A[2] GND GND VDD VDD net5 sky130_fd_sc_hd__nor2_1
+x3 A[1] A[0] GND GND VDD VDD net6 sky130_fd_sc_hd__or2_1
+x4 net5 net6 GND GND VDD VDD Z[1] sky130_fd_sc_hd__and2_1
+x5 A[3] GND GND VDD VDD net4 sky130_fd_sc_hd__inv_1
+x7 net1 A[0] GND GND VDD VDD net2 sky130_fd_sc_hd__and2_1
+x8 net2 A[2] GND GND VDD VDD net3 sky130_fd_sc_hd__or2_1
+x9 net4 net3 GND GND VDD VDD Z[0] sky130_fd_sc_hd__and2_1
+x6 A[1] GND GND VDD VDD net1 sky130_fd_sc_hd__inv_1
+.ends
+

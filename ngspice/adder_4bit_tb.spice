@@ -1,0 +1,77 @@
+* =============================================================
+* Testbench: 4-bit Ripple-Carry Adder: B[0] -> Sum[3] delay
+* Process : SkyWater SKY130 (sky130_fd_sc_hd)
+* Stimulus : Toggle B[0] while A[3:0]=1111, B[3:1]=000, Cin=0
+*            This forces the carry to ripple through all 4 stages
+*            making B[0]->Sum[3] the observable critical path.
+* Measure  : propagation delay from B[0] 50% to Sum[3] 50%
+* =============================================================
+
+* ---- Include PDK libs ----------------------------------------
+.lib $PDK_ROOT/$PDK/libs.tech/combined/sky130.lib.spice tt
+
+* uncomment this line if DUT is a xschem netlist
+*.include $PDK_ROOT/$PDK/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+
+* ---- Include DUT ----------------------------------------
+.include $PWD/../magic/adder_4bit.rcx.spice
+
+* ---- Global supply ------------------------------------------
+.global VDD VSS
+Vvdd VDD 0 DC 1.8
+Vvss VSS 0 DC 0
+
+* ---- Stimulus sources ----------------------------------------
+* A[3:0] = 1111  (static)
+Va0 A0 0 DC 1.8
+Va1 A1 0 DC 1.8
+Va2 A2 0 DC 1.8
+Va3 A3 0 DC 1.8
+
+* Cin and B[3:1] = 0000  (static)
+Vcin CIN 0 DC 0
+Vb1 B1 0 DC 0
+Vb2 B2 0 DC 0
+Vb3 B3 0 DC 0
+
+* B[0]: step low -> high at t=2ns (rise), then high -> low at t=12ns (fall)
+* Use piecewise-linear to get clean 50ps edges
+* Pulse can be used instead since the waveform is periodic and uniform
+Vb0 B0 0 PWL(
++ 0ns    0
++ 2ns    0
++ 2.05ns 1.8
++ 12ns   1.8
++ 12.05ns 0
++ 20ns   0
++ )
+
+* ---- DUT: 4-bit ripple-carry adder --------------------------
+Xfa4 CIN COUT VDD VSS A0 B0 A2 B2 B1 A1 SUM2 B3 A3 SUM0 SUM1 SUM3 adder_4bit
+
+* ---- Load capacitance (4fF typical for 1 cell) --
+Cload_s0  SUM0  0  0.01pF
+Cload_s1  SUM1  0  0.01pF
+Cload_s2  SUM2  0  0.01pF
+Cload_s3  SUM3  0  0.01pF
+Cload_co3 COUT 0  0.01pF
+
+* ---- Batch mode ---------------------------------------------
+* run ngspice with -b flag, -r flag is often used to write raw waveform file
+.tran 1ps 20ns
+.save v(B0) v(COUT) v(SUM0) v(SUM1) v(SUM2) v(SUM3)
+
+
+*----- Interactive mode----------------------------------------
+* run ngspice without -b or -r flag to enter interactive mode
+* command run one by one sequentially, add quit at the end to exit ngspice
+* useful for scripting with if/else, for loop logic
+*.control
+*tran 1ps 20ns
+*write adder_4bit.raw all
+*meas tran tpd_rise trig v(B0) val=0.9 fall=1 targ v(SUM3) val=0.9 rise=1
+*meas tran tpd_fall trig v(B0) val=0.9 rise=1 targ v(SUM3) val=0.9 fall=1
+*print tpd_rise tpd_fall
+*.endc
+
+.end
