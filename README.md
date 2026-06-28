@@ -11,13 +11,13 @@ Vi du: `16'b0001011000100000` co 3 so 0 dau tien => ngo ra `Y = 5'b00011`.
 
 ## Thong so thiet ke
 
-| Thong so    | Gia tri   |
-|-------------|-----------|
-| Ngo vao     | A[15:0]   |
-| Ngo ra      | Y[4:0]    |
-| Kieu mach   | To hop (combinational) |
+| Thong so    | Gia tri                  |
+|-------------|--------------------------|
+| Ngo vao     | A[15:0]                  |
+| Ngo ra      | Y[4:0]                   |
+| Kieu mach   | To hop (combinational)   |
 | Cong nghe   | SKY130 (sky130_fd_sc_hd) |
-| Dien ap     | 1.8V |
+| Dien ap     | 1.8V                     |
 
 ## Kien truc mach
 
