@@ -58,8 +58,7 @@ VLSI_Project_Nhom5/
 ├── ngspice/        # Post-layout simulation (parasitic extraction)
 ├── netgen/         # LVS verification
 ├── opensta/        # Static Timing Analysis (OpenSTA)
-├── Word/           # Bao cao (empty folder)
-└── *.docx          # 7 file bao cao Word
+
 ```
 
 ## Quy trinh thiet ke
