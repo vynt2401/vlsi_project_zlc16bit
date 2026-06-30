@@ -37,7 +37,7 @@ Mach gom 2 tang:
 ### Danh sach cells su dung
 
 | Standard cell           | So luong |
-|-------------------------|          |
+|-------------------------|----------|
 | sky130_fd_sc_hd__nor4_1 |     4    |
 | sky130_fd_sc_hd__nor2_1 |     4    |
 | sky130_fd_sc_hd__or2_1  |     8    |
